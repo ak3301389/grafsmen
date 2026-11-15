@@ -7,6 +7,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'firebase_options.dart';
 
+import 'package:package_info_plus/package_info_plus.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -187,6 +189,7 @@ class _ShiftCalendarState extends State<ShiftCalendar> {
   double _shiftHours = 12.0;
   bool _isStatsExpanded = false;
   bool _isLoading = true;
+  String _appVersion = '';
 
   final User? _user = FirebaseAuth.instance.currentUser;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -213,7 +216,15 @@ class _ShiftCalendarState extends State<ShiftCalendar> {
     _pageController = PageController(
       initialPage: (now.year - 2026) * 12 + now.month - 1,
     );
+    _loadVersion();
     _loadFromCloud();
+  }
+
+  Future<void> _loadVersion() async {
+    final info = await PackageInfo.fromPlatform();
+    setState(() {
+      _appVersion = '${info.version}+${info.buildNumber}';
+    });
   }
 
   Future<void> _loadFromCloud() async {
@@ -674,6 +685,11 @@ class _ShiftCalendarState extends State<ShiftCalendar> {
                         });
                         _saveToCloud();
                       },
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Версия приложения: $_appVersion',
+                      style: const TextStyle(color: Colors.grey, fontSize: 12),
                     ),
                   ],
                 ),

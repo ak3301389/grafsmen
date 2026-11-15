@@ -51,3 +51,4 @@ lib/firebase_options.dart
 firebase.exe
 firepit-log.txt
 shift.html
+release/
